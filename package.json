@@ -1,0 +1,17 @@
+{
+	"name": "@neematajs-bun/http-server",
+	"module": "index.ts",
+	"type": "module",
+	"scripts": {
+		"check:lint": "biome lint .",
+		"check:fmt": "biome format .",
+		"fmt": "biome check --apply ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.2",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	}
+}
