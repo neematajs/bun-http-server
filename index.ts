@@ -124,6 +124,14 @@ export class Server<T = any> {
     this.server?.stop()
   }
 
+  get port() {
+    return this.server?.port
+  }
+
+  get hostname() {
+    return this.server?.hostname
+  }
+
   private applyCors(req: Request, headers: Headers) {
     const origin = req.headers.get('origin')
 
