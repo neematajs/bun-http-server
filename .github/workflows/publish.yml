@@ -20,5 +20,5 @@ jobs:
       - name: Publish
         run: |
           npm version ${{ github.event.release.tag_name }} --no-commit-hooks --no-git-tag-version --silent || true
-          npm publish --filter "*" --access public --no-git-checks --tag $(bun ./scripts/publish-tag.ts ${{ github.event.release.tag_name }})
+          npm publish --access public --no-git-checks --tag $(bun ./scripts/publish-tag.ts ${{ github.event.release.tag_name }})
         
