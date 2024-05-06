@@ -3,10 +3,10 @@ import { Server } from './index'
 
 describe('Should pass', () => {
   const hostname = 'localhost'
-  const testValue = 'test'
+  const testValue = 'test' as const
 
   let port: number
-  let server: Server
+  let server: Server<typeof testValue>
 
   const getUrl = (path: string) =>
     new URL(path, `http://${hostname}:${port}`).toString()
@@ -18,10 +18,11 @@ describe('Should pass', () => {
     })
 
   beforeEach(() => {
-    server = new Server({ port: 0 } as any)
+    server = new Server<typeof testValue>({ port: 0 })
       .get('/get', () => new Response(testValue))
       .post('/post', () => new Response(testValue))
       .get('/some/*/blob', () => new Response(testValue))
+      .request(['GET', 'POST'], '/both', () => new Response(testValue))
       .upgrade('/upgrade', () => ({ data: testValue }))
       .ws({
         open: (ws) => {
@@ -36,7 +37,6 @@ describe('Should pass', () => {
           )
         },
       })
-      .request(['GET', 'POST'], '/both', () => new Response(testValue))
     server.listen()
     port = server.port!
   })
@@ -84,5 +84,8 @@ describe('Should pass', () => {
     const ws2 = new WebSocket(`ws://${hostname}:${port}/get`)
     await new Promise((resolve) => (ws2.onclose = resolve))
     expect(ws2.readyState).toBe(WebSocket.CLOSED)
+
+    ws.close()
+    ws2.close()
   })
 })

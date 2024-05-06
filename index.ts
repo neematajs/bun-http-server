@@ -2,11 +2,29 @@ import {
   type Serve as BunServe,
   type Server as BunServer,
   Glob,
+  type ServeOptions,
+  type TLSServeOptions,
+  type TLSWebSocketServeOptions,
+  type UnixServeOptions,
+  type UnixTLSServeOptions,
+  type UnixTLSWebSocketServeOptions,
+  type UnixWebSocketServeOptions,
   type WebSocketHandler,
+  type WebSocketServeOptions,
 } from 'bun'
 
 type HttpBaseHandler = { path: string; handler: HttpHandler; glob: Glob }
 type Async<T> = T | Promise<T>
+type ServeType<T> = Omit<T, 'fetch' | 'websocket'>
+type Serve =
+  | ServeType<ServeOptions>
+  | ServeType<TLSServeOptions>
+  | ServeType<UnixServeOptions>
+  | ServeType<UnixTLSServeOptions>
+  | ServeType<WebSocketServeOptions>
+  | ServeType<TLSWebSocketServeOptions>
+  | ServeType<UnixWebSocketServeOptions>
+  | ServeType<UnixTLSWebSocketServeOptions>
 
 export type HttpHandler = (req: Request, server: BunServer) => Async<Response>
 
@@ -19,13 +37,13 @@ export type ServerOptions = {
   }
 }
 
-export class Server<T = any> {
+export class Server<T = undefined> {
   private readonly httpHandlers = new Map<string, HttpBaseHandler[]>()
   private server: BunServer | null = null
   private wsHandlers?: WebSocketHandler<T>
 
   constructor(
-    private serveOptions: Omit<BunServe<any>, 'serve' | 'websocket'>,
+    private serveOptions: Serve,
     private readonly options: ServerOptions = {},
   ) {}
 
@@ -59,10 +77,14 @@ export class Server<T = any> {
     handler: (
       req: Request,
       server: BunServer,
-    ) => Async<{
-      headers?: Bun.HeadersInit
-      data?: T
-    }>,
+    ) => Async<
+      T extends undefined
+        ? {
+            headers?: Bun.HeadersInit
+            data?: never
+          }
+        : { headers?: Bun.HeadersInit; data: T }
+    >,
   ) {
     return this.request(['UPGRADE'], path, async (req, server) => {
       const options = await handler(req, server)
@@ -118,6 +140,8 @@ export class Server<T = any> {
         return new Response(undefined, { status: 404, headers })
       },
     })
+
+    return this.server.url
   }
 
   close() {
