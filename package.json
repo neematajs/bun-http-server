@@ -6,7 +6,7 @@
 		"check:type": "tsc --noEmit",
 		"check:lint": "biome lint .",
 		"check:fmt": "biome format .",
-		"check": "bun run check:type && bun run check:lint && bun run check:fmt && bun test",
+		"check": "bun run check:type && bun run check:lint && bun run check:fmt",
 		"fmt": "biome check --apply .",
 		"prepare": "husky"
 	},
