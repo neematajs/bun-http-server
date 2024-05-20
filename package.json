@@ -1,5 +1,5 @@
 {
-	"name": "@neematajs-bun/http-server",
+	"name": "@neematajs/bun-http-server",
 	"module": "index.ts",
 	"type": "module",
 	"scripts": {
@@ -10,8 +10,8 @@
 		"fmt": "biome check --apply ."
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.7.1",
-		"@types/bun": "latest"
+		"@biomejs/biome": "1.7.3",
+		"@types/bun": "^1.1.0"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
