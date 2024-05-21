@@ -163,7 +163,8 @@ export class Server<T = undefined> {
       const { cors } = this.options
       let allowed = false
       if (typeof cors.origin === 'string')
-        allowed = cors.origin === req.headers.get('origin')
+        allowed =
+          cors.origin === '*' || cors.origin === req.headers.get('origin')
       else if (cors.origin instanceof Bun.Glob) {
         allowed = cors.origin.match(origin)
       } else {
