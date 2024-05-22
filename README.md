@@ -6,7 +6,7 @@
 
 ### Install
 ```sh
-bun install @neematajs-bun/http-server
+bun install @neematajs/bun-http-server
 ```
 
 ### Usage
