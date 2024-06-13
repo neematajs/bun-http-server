@@ -1,5 +1,4 @@
 import {
-  type Serve as BunServe,
   type Server as BunServer,
   Glob,
   type ServeOptions,
@@ -112,7 +111,7 @@ export class Server<T = undefined> {
           upgrading ? 'UPGRADE' : req.method,
         )
         const headers = new Headers()
-        // @ts-expect-error
+
         this.applyCors(req, headers)
 
         if (handlers) {
@@ -126,8 +125,9 @@ export class Server<T = undefined> {
               if (upgrading && response === undefined)
                 return void undefined as unknown as any
 
-              for (const [key, value] of response.headers)
+              response.headers.forEach((value, key) => {
                 headers.set(key, value)
+              })
 
               return new Response(response.body, {
                 headers,
@@ -162,10 +162,10 @@ export class Server<T = undefined> {
     if (this.options.cors && origin) {
       const { cors } = this.options
       let allowed = false
-      if (typeof cors.origin === 'string')
+      if (typeof cors.origin === 'string') {
         allowed =
           cors.origin === '*' || cors.origin === req.headers.get('origin')
-      else if (cors.origin instanceof Bun.Glob) {
+      } else if (cors.origin instanceof Bun.Glob) {
         allowed = cors.origin.match(origin)
       } else {
         allowed = cors.origin(req)
